@@ -65,7 +65,12 @@ export default async function BlogPostPage({
         )}
 
         <article className="mt-8 whitespace-pre-line text-base leading-relaxed text-neutral-800">
-          {post.content}
+          <div
+  className="prose prose-lg max-w-none"
+  dangerouslySetInnerHTML={{
+    __html: post.content,
+  }}
+/>
         </article>
 
         <AdSlot />

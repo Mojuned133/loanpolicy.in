@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Post } from "@/types/post";
+import RichTextEditor from "@/components/RichTextEditor";
 
 const CATEGORY_OPTIONS = [
   "Bank Loan",
@@ -115,11 +116,11 @@ export default function PostForm({ post }: { post?: Post }) {
 
       <div>
         <label className="mb-1 block text-sm font-medium text-neutral-700">Content</label>
-        <textarea
+        <RichTextEditor
           required
           rows={10}
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={setContent}
           className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-green focus:outline-none focus:ring-1 focus:ring-brand-green"
         />
       </div>
