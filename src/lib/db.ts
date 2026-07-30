@@ -157,7 +157,7 @@ export async function getPostBySlug(
     args: [slug],
   });
 
-  return result.rows[0] as Post | undefined;
+  return result.rows[0] as unknown as Post | undefined;
 }
 
 export async function getPostById(
@@ -170,7 +170,7 @@ export async function getPostById(
     args: [id],
   });
 
-  return result.rows[0] as Post | undefined;
+  return result.rows[0] as unknown as Post | undefined;
 }
 
 export async function getPostsByCategory(
