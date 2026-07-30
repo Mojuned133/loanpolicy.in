@@ -21,7 +21,9 @@ export default function PostForm({ post }: { post?: Post }) {
   const [excerpt, setExcerpt] = useState(post?.excerpt ?? "");
   const [content, setContent] = useState(post?.content ?? "");
   const [image, setImage] = useState(post?.image ?? "");
-  const [category, setCategory] = useState(post?.category ?? CATEGORY_OPTIONS[0]);
+  const [category, setCategory] = useState(
+    post?.category ?? CATEGORY_OPTIONS[0],
+  );
   const [featured, setFeatured] = useState(!!post?.featured);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -38,7 +40,15 @@ export default function PostForm({ post }: { post?: Post }) {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, slug, excerpt, content, image, category, featured }),
+        body: JSON.stringify({
+          title,
+          slug,
+          excerpt,
+          content,
+          image,
+          category,
+          featured,
+        }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -55,7 +65,9 @@ export default function PostForm({ post }: { post?: Post }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="mb-1 block text-sm font-medium text-neutral-700">Title</label>
+        <label className="mb-1 block text-sm font-medium text-neutral-700">
+          Title
+        </label>
         <input
           required
           value={title}
@@ -66,7 +78,10 @@ export default function PostForm({ post }: { post?: Post }) {
 
       <div>
         <label className="mb-1 block text-sm font-medium text-neutral-700">
-          Slug <span className="text-neutral-400">(optional — auto-generated from title)</span>
+          Slug{" "}
+          <span className="text-neutral-400">
+            (optional — auto-generated from title)
+          </span>
         </label>
         <input
           value={slug}
@@ -77,7 +92,9 @@ export default function PostForm({ post }: { post?: Post }) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-neutral-700">Category</label>
+        <label className="mb-1 block text-sm font-medium text-neutral-700">
+          Category
+        </label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -92,7 +109,9 @@ export default function PostForm({ post }: { post?: Post }) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-neutral-700">Image URL</label>
+        <label className="mb-1 block text-sm font-medium text-neutral-700">
+          Image URL
+        </label>
         <input
           value={image}
           onChange={(e) => setImage(e.target.value)}
@@ -115,14 +134,10 @@ export default function PostForm({ post }: { post?: Post }) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-neutral-700">Content</label>
-        <RichTextEditor
-          required
-          rows={10}
-          value={content}
-          onChange={setContent}
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-green focus:outline-none focus:ring-1 focus:ring-brand-green"
-        />
+        <label className="mb-1 block text-sm font-medium text-neutral-700">
+          Content
+        </label>
+        <RichTextEditor value={content} onChange={setContent} />
       </div>
 
       <label className="flex items-center gap-2 text-sm text-neutral-700">
