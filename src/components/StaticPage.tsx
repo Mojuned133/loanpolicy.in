@@ -2,14 +2,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getCategories } from "@/lib/db";
 
-export default function StaticPage({
+export default async function StaticPage({
   title,
   children,
 }: {
   title: string;
   children: React.ReactNode;
 }) {
-  const categories = getCategories();
+  const categories = await getCategories();
 
   return (
     <div className="min-h-screen bg-neutral-50">

@@ -6,7 +6,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-neutral-50">
       <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4">
         <Link href="/admin/dashboard" className="text-lg font-extrabold text-brand-green">
-          ज्ञान मित्र · Admin
+          Loan Policy · Admin
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/" target="_blank" className="text-sm text-neutral-600 hover:text-brand-green">

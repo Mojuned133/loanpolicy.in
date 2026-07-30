@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
         <div className="mb-6 flex justify-center">
           <span className="inline-flex items-center gap-1 rounded-md bg-brand-black px-3 py-2">
             <span className="text-lg text-brand-green">◉</span>
-            <span className="text-xl font-extrabold text-brand-green">ज्ञान मित्र</span>
+            <span className="text-xl font-extrabold text-brand-green">Loan Policy</span>
           </span>
         </div>
         <h1 className="mb-4 text-center text-lg font-bold text-neutral-900">Admin Login</h1>

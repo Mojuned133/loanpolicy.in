@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import PostForm from "@/app/admin/PostForm";
 import { getPostById } from "@/lib/db";
 
-export default function EditPostPage({ params }: { params: { id: string } }) {
-  const post = getPostById(Number(params.id));
+export default async function EditPostPage({ params }: { params: { id: string } }) {
+  const post = await getPostById(Number(params.id));
   if (!post) return notFound();
 
   return (

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { getAllPosts } from "@/lib/db";
 import DeletePostButton from "./DeletePostButton";
 
-export default function DashboardPage() {
-  const posts = getAllPosts();
+export default async function DashboardPage() {
+  const posts = await getAllPosts();
 
   return (
     <div>

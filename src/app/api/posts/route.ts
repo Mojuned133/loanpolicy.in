@@ -9,26 +9,49 @@ function requireAuth(req: NextRequest) {
 }
 
 export async function GET() {
-  return NextResponse.json(getAllPosts());
+  const posts = await getAllPosts();
+  return NextResponse.json(posts);
 }
 
 export async function POST(req: NextRequest) {
   if (!requireAuth(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
   }
 
   const body = await req.json();
-  const { title, excerpt, content, image, category, featured, slug } = body;
+
+  const {
+    title,
+    excerpt,
+    content,
+    image,
+    category,
+    featured,
+    slug,
+  } = body;
 
   if (!title || !excerpt || !content || !category) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing required fields" },
+      { status: 400 }
+    );
   }
 
-  const finalSlug = slug?.trim()
-    ? slugify(slug, { lower: true, strict: true })
-    : slugify(title, { lower: true, strict: true });
+  const finalSlug =
+    slug?.trim()
+      ? slugify(slug, {
+          lower: true,
+          strict: true,
+        })
+      : slugify(title, {
+          lower: true,
+          strict: true,
+        });
 
-  const post = createPost({
+  const post = await createPost({
     title,
     slug: finalSlug,
     excerpt,
@@ -38,5 +61,7 @@ export async function POST(req: NextRequest) {
     featured: featured ? 1 : 0,
   });
 
-  return NextResponse.json(post, { status: 201 });
+  return NextResponse.json(post, {
+    status: 201,
+  });
 }
