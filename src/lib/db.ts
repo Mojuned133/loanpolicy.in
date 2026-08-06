@@ -2,8 +2,7 @@ import { createClient } from "@libsql/client";
 
 export const db = createClient({
   url:
-    process.env.TURSO_DATABASE_URL ||
-    "file:local.db",
+    process.env.TURSO_DATABASE_URL,
   authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
@@ -21,10 +20,12 @@ export type Post = {
 
 let initialized = false;
 
-async function ensureInit() {
-  if (initialized) return;
+let initPromise: Promise<void> | null = null;
 
-  await db.execute(`
+async function ensureInit() {
+  if (initPromise) return initPromise;
+
+  initPromise = db.execute(`
     CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
@@ -36,90 +37,88 @@ async function ensureInit() {
       featured INTEGER NOT NULL DEFAULT 0,
       createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
-  `);
+  `).then(() => {});
 
-  initialized = true;
+  return initPromise;
+}
+
+async function query<T>(sql: string, args: any[] = []) {
+  await ensureInit();
+
+  const result = await db.execute({
+    sql,
+    args,
+  });
+
+  return result.rows as unknown as T[];
 }
 
 export async function getAllPosts(): Promise<Post[]> {
-  await ensureInit();
-  const result = await db.execute(
-    "SELECT * FROM posts ORDER BY createdAt DESC"
+  return query<Post>(
+    `SELECT * FROM posts ORDER BY datetime(createdAt) DESC`
   );
-  return result.rows as unknown as Post[];
 }
 
-export async function getPostBySlug(
-  slug: string
-): Promise<Post | undefined> {
-  await ensureInit();
-  const result = await db.execute({
-    sql: "SELECT * FROM posts WHERE slug = ?",
-    args: [slug],
-  });
-
-  return result.rows[0] as unknown as Post | undefined;
-}
-
-export async function getPostById(
-  id: number
-): Promise<Post | undefined> {
-  await ensureInit();
-
-  const result = await db.execute({
-    sql: "SELECT * FROM posts WHERE id = ?",
-    args: [id],
-  });
-
-  return result.rows[0] as unknown as Post | undefined;
-}
-
-export async function getPostsByCategory(
-  category: string
-): Promise<Post[]> {
-  await ensureInit();
-
-  const result = await db.execute({
-    sql: "SELECT * FROM posts WHERE category=? ORDER BY createdAt DESC",
-    args: [category],
-  });
-
-  return result.rows as unknown as Post[];
-}
-
-export async function getCategories(): Promise<string[]> {
-  await ensureInit();
-
-  const result = await db.execute(
-    "SELECT DISTINCT category FROM posts ORDER BY category"
+export async function getPostBySlug(slug: string) {
+  const posts = await query<Post>(
+    `SELECT * FROM posts WHERE slug=? LIMIT 1`,
+    [slug]
   );
+
+  return posts[0];
+}
+
+export async function getPostById(id: number) {
+  const posts = await query<Post>(
+    `SELECT * FROM posts WHERE id=? LIMIT 1`,
+    [id]
+  );
+
+  return posts[0];
+}
+
+export async function getPostsByCategory(category: string) {
+  return query<Post>(
+    `SELECT * FROM posts
+     WHERE category=?
+     ORDER BY datetime(createdAt) DESC`,
+    [category]
+  );
+}
+
+export async function getCategories() {
+  await ensureInit();
+
+  const result = await db.execute(`
+    SELECT DISTINCT category
+    FROM posts
+    ORDER BY category
+  `);
 
   return result.rows.map((r) => String(r.category));
 }
 
-export async function getPopularPosts(
-  limit = 5
-): Promise<Post[]> {
-  await ensureInit();
-
-  const result = await db.execute({
-    sql: "SELECT * FROM posts ORDER BY createdAt DESC LIMIT ?",
-    args: [limit],
-  });
-
-  return result.rows as unknown as Post[];
+export async function getPopularPosts(limit = 5) {
+  return query<Post>(
+    `SELECT *
+     FROM posts
+     ORDER BY featured DESC,
+              datetime(createdAt) DESC
+     LIMIT ?`,
+    [limit]
+  );
 }
 
 export async function createPost(
   data: Omit<Post, "id" | "createdAt">
-): Promise<Post> {
+) {
   await ensureInit();
 
   await db.execute({
     sql: `
       INSERT INTO posts
-      (title, slug, excerpt, content, image, category, featured)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      (title,slug,excerpt,content,image,category,featured)
+      VALUES(?,?,?,?,?,?,?)
     `,
     args: [
       data.title,
@@ -132,7 +131,7 @@ export async function createPost(
     ],
   });
 
-  return (await getPostBySlug(data.slug))!;
+  return getPostBySlug(data.slug);
 }
 
 export async function updatePost(
@@ -169,13 +168,15 @@ export async function updatePost(
   return getPostById(id);
 }
 
-export async function deletePost(id: number): Promise<void> {
+export async function deletePost(id: number) {
   await ensureInit();
 
   await db.execute({
-    sql: "DELETE FROM posts WHERE id=?",
+    sql: `DELETE FROM posts WHERE id=?`,
     args: [id],
   });
+
+  return true;
 }
 
 export default db;
