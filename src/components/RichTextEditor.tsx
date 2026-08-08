@@ -186,7 +186,7 @@ import {
 
 import { DOMParser as PMDOMParser } from "@tiptap/pm/model";
 
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { marked } from "marked";
 
 function looksLikeMarkdown(text: string): boolean {
@@ -204,12 +204,10 @@ function looksLikeMarkdown(text: string): boolean {
  * Google Docs often uses <p>, <span>, <b>, <i>, inline styles etc.
  * We should NOT convert such content through Markdown.
  */
-function hasRichClipboardHtml(html: string): boolean {
+function hasStructuredHtml(html: string): boolean {
   if (!html) return false;
 
-  return /<(p|div|h[1-6]|ul|ol|li|blockquote|strong|b|em|i|u|s|a|span|br|table|tr|td|th|img)\b/i.test(
-    html,
-  );
+  return /<(h[1-6]|ul|ol|li|blockquote|table|tr|td|th)\b/i.test(html);
 }
 
 export default function RichTextEditor({
@@ -306,7 +304,7 @@ export default function RichTextEditor({
          *
          * Let ProseMirror parse it directly.
          */
-        if (html && hasRichClipboardHtml(html)) {
+        if (html && hasStructuredHtml(html)) {
           return false;
         }
 
