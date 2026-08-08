@@ -7,6 +7,9 @@ import {
 import { SESSION_COOKIE, isValidSessionToken } from "@/lib/auth";
 import slugify from "slugify";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 function requireAuth(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   return isValidSessionToken(token);

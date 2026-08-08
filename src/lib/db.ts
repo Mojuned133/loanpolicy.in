@@ -1,9 +1,10 @@
 import { createClient } from "@libsql/client";
 
 export const db = createClient({
-  url:
-    process.env.TURSO_DATABASE_URL || "file:local.db",
+  url: process.env.TURSO_DATABASE_URL || "file:local.db",
   authToken: process.env.TURSO_AUTH_TOKEN,
+  fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+    fetch(input, { ...init, cache: "no-store" }),
 });
 
 export type Post = {
