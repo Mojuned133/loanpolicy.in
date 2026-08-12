@@ -8,7 +8,11 @@ import { getPostBySlug, getCategories, getPopularPosts } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const post = await getPostBySlug(params.slug);
   if (!post) return notFound();
 
@@ -35,9 +39,21 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           })}
         </p>
 
-        {post.image && (
+        {/* {post.image && (
           <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-lg bg-neutral-100">
             <Image src={post.image} alt={post.title} fill className="object-cover" />
+          </div>
+        )} */}
+
+        {post.image && (
+          <div className="relative mt-6 w-full overflow-hidden rounded-lg bg-neutral-100">
+            <Image
+              src={post.image}
+              alt={post.title}
+              width={1200}
+              height={675}
+              className="h-auto w-full object-contain"
+            />
           </div>
         )}
 
