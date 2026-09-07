@@ -18,10 +18,15 @@ export const metadata: Metadata = {
 
 const ADSENSE_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="hi">
       <head>
+        {/* Google AdSense */}
         {ADSENSE_CLIENT_ID && (
           <Script
             async
@@ -30,7 +35,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             strategy="afterInteractive"
           />
         )}
+
+        {/* Google Analytics / Google tag */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-JZ24WSGS5K"
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-JZ24WSGS5K');
+          `}
+        </Script>
       </head>
+
       <body className={`${body.variable} ${devanagari.variable} font-sans`}>
         {children}
       </body>
