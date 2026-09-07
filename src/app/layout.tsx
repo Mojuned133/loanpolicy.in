@@ -32,8 +32,10 @@ export default function RootLayout({
       <head>
         {/* Google AdSense */}
         {ADSENSE_CLIENT_ID && (
-          <script
+          <Script
+            id="adsense-script"
             async
+            strategy="afterInteractive"
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
             crossOrigin="anonymous"
           />
@@ -56,9 +58,7 @@ export default function RootLayout({
         </Script>
       </head>
 
-      <body
-        className={`${body.variable} ${devanagari.variable} font-sans`}
-      >
+      <body className={`${body.variable} ${devanagari.variable} font-sans`}>
         {children}
       </body>
     </html>
