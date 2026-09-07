@@ -3,7 +3,11 @@ import { Noto_Sans_Devanagari, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-const body = Inter({ subsets: ["latin"], variable: "--font-body" });
+const body = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
 const devanagari = Noto_Sans_Devanagari({
   subsets: ["devanagari"],
   weight: ["400", "600", "700", "800"],
@@ -28,15 +32,14 @@ export default function RootLayout({
       <head>
         {/* Google AdSense */}
         {ADSENSE_CLIENT_ID && (
-          <Script
+          <script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
             crossOrigin="anonymous"
-            strategy="afterInteractive"
           />
         )}
 
-        {/* Google Analytics / Google tag */}
+        {/* Google Analytics */}
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-JZ24WSGS5K"
@@ -48,13 +51,14 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
-
             gtag('config', 'G-JZ24WSGS5K');
           `}
         </Script>
       </head>
 
-      <body className={`${body.variable} ${devanagari.variable} font-sans`}>
+      <body
+        className={`${body.variable} ${devanagari.variable} font-sans`}
+      >
         {children}
       </body>
     </html>
